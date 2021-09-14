@@ -21,13 +21,11 @@ func main() {
 	fmt.Printf("\n")
 	DIR := os.Args[1]
 	paths := getdir(DIR) // Get files names/paths and store in an array
-	fmt.Println(_regexes[1])
-	fmt.Println(_keys[1])
 	for _, file := range paths {
-		fmt.Println(file)
-		if !checkifdir(file) { // Directory check. Only reads paths if not a directory
-			readFile(file) // Returns the file content. Should we return this? Need to work on that
-			break
+		if !checkignore(file) { // Directory check. Only reads paths if not a directory
+			if !checkifdir(file) {
+				readFile(file) // Returns the file content. Should we return this? Need to work on that
+			}
 		}
 	}
 }
@@ -54,6 +52,8 @@ func readFile(file string) {
 	if err != nil {
 		log.Println("[-]Error!!!!")
 	}
+	// fmt.Println(_regexes[1])
+	// fmt.Println(_keys[1])
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -75,4 +75,22 @@ func checkifdir(file string) bool {
 	}
 	mode := fi.Mode()
 	return mode.IsDir() //return true if file is directory and false if not
+}
+
+func checkignore(file string) bool {
+	ignorefile := ".goignore"
+	ignore, err := os.Open(ignorefile)
+	if err != nil {
+		log.Println(err)
+		return true
+	}
+	defer ignore.Close()
+	scanner := bufio.NewScanner(ignore)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if file == line {
+			return true
+		}
+	}
+	return false
 }
