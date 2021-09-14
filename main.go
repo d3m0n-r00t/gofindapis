@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	_ "github.com/dimiro1/banner/autoload"
 )
@@ -59,6 +60,10 @@ func readFile(file string) {
 	for scanner.Scan() {
 		line := scanner.Text() // the content is read line by line
 		fmt.Println(line)
+		for i := range _regexes {
+			r, _ := regexp.Compile(_regexes[i])
+			fmt.Println(r.Match([]byte(line)))
+		}
 		break
 	}
 	if err := scanner.Err(); err != nil {
