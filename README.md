@@ -10,3 +10,9 @@
                                                                           
            
 ```
+
+This tool is build to find APIs. Just go recursively go around files and read them and scan for API keys with regex.
+
+#### TO DO
+- Find a way to add this tool as git pre-commit hook check.
+- Optimize the shit out of this!!!!
