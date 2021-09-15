@@ -61,7 +61,7 @@ func readFile(file string) {
 			r, err := regexp.Compile(_regexes[i])
 			checkerror(err)
 			// fmt.Println(r.Find([]byte(line)))
-			found := r.Find([]byte(line)) // Regex not matching
+			found := r.Find([]byte(line))
 			if len(found) > 0 {
 				fmt.Println("[+]Found Keys Gooys!!!!", string(found))
 				fmt.Println(_keys[i], " Found in file", file)
