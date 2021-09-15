@@ -1,5 +1,6 @@
 package main
 
+// All imports
 import (
 	"bufio"
 	"fmt"
@@ -7,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"time"
 
 	_ "github.com/dimiro1/banner/autoload"
 )
@@ -23,12 +25,13 @@ func main() {
 	DIR := os.Args[1]
 	paths := getdir(DIR) // Get files names/paths and store in an array
 	for _, file := range paths {
-		if !checkignore(file) { // Directory check. Only reads paths if not a directory
-			if !checkifdir(file) {
-				readFile(file) // Returns the file content. Should we return this? Need to work on that
+		if !checkignore(file) { // Ignore check. If you don't want to scan any file in code base just add it in .goignore. Remember to add file name
+			if !checkifdir(file) { // Directory check. Only reads paths if not a directory
+				go readFile(file) // Returns the file content. Should we return this? Need to work on that
 			}
 		}
 	}
+	time.Sleep(time.Second)
 }
 
 // Recursivley go thourgh directories and find all the files and return an array of files/paths
@@ -56,7 +59,7 @@ func readFile(file string) {
 		for i := range _regexes {
 			r, err := regexp.Compile(_regexes[i])
 			checkerror(err)
-			found := r.Find([]byte(line))
+			found := r.Find([]byte(line)) // Find keys with regex
 			if len(found) > 0 {
 				fmt.Println("[+]Found Keys Gooys!!!!", string(found)) // Final Result!! Prints result if any key found
 				fmt.Println(_keys[i], " Found in file", file)
