@@ -63,10 +63,10 @@ func readFile(file string) {
 			// fmt.Println(r.Find([]byte(line)))
 			found := r.Find([]byte(line))
 			if len(found) > 0 {
-				fmt.Println("[+]Found Keys Gooys!!!!", found)
+				fmt.Println("[+]Found Keys Gooys!!!!", string(found))
+				fmt.Println(_keys[i], " Found in file", file)
 			}
 		}
-		break
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
