@@ -21,7 +21,7 @@ var _keys = [33]string{"google_api", "firebase", "google_captcha", "google_oauth
 // Main function
 func main() {
 	// fmt.Println("\nHello World!!!") Well here is where I started Go programming
-	fmt.Printf("\n")
+	fmt.Printf("\n\n")
 	DIR := os.Args[1]
 	paths := getdir(DIR) // Get files names/paths and store in an array
 	for _, file := range paths {
@@ -51,6 +51,7 @@ func getdir(path string) []string {
 // Read file and store the data in data probably the main function
 func readFile(file string) {
 	f, err := os.Open(file)
+	var new_arr []string
 	checkerror(err)
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
@@ -61,8 +62,11 @@ func readFile(file string) {
 			checkerror(err)
 			found := r.Find([]byte(line)) // Find keys with regex
 			if len(found) > 0 {
-				fmt.Println("[+]Found Keys Gooys!!!!", string(found)) // Final Result!! Prints result if any key found
-				fmt.Println(_keys[i], " Found in file", file)
+				fmt.Println("[+] Found ", _keys[i], " ", string(found), "in file", file) // Final Result!! Prints result if any key found
+				new_arr = append(new_arr, string(found))
+			}
+			if len(new_arr) > 0 {
+				os.Exit(1) //Exit with non-zero code just to add the script as pre-commit hook
 			}
 		}
 	}
