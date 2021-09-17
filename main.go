@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"io/fs"
 
 	_ "github.com/dimiro1/banner/autoload"
 )
@@ -19,6 +20,8 @@ var _keys = [33]string{"google_api", "firebase", "google_captcha", "google_oauth
 
 // var wg sync.WaitGroup
 
+var dirarr []string
+
 // Main function
 func main() {
 	// fmt.Println("\nHello World!!!") Well here is where I started Go programming
@@ -26,7 +29,6 @@ func main() {
 	DIR := os.Args[1]
 	paths := getdir(DIR)     // Get files names/paths and store in an array
 	c := make(chan []string) // Create a channel for concurrency
-	var dirarr []string
 	ignorefile := ".goignore"
 	ignore, err := os.Open(ignorefile)
 	checkerror(err)
@@ -34,7 +36,11 @@ func main() {
 	scanner := bufio.NewScanner(ignore)
 	for scanner.Scan() {
 		line := scanner.Text()
-		dirarr = append(dirarr, line)
+		if checkifdir(line) {
+			filepath.WalkDir(line, walk)
+		} else {
+			dirarr = append(dirarr, line)
+		}
 	}
 	for _, file := range paths {
 		if !checkignore(dirarr, file) { // Ignore check. If you don't want to scan any file in code base just add it in .goignore. Remember to add file name
@@ -52,6 +58,15 @@ func main() {
 	}
 	fmt.Println("[+] Done No keys found!!!")
 	// wg.Wait()
+}
+
+// Ignore files callback to return full path entries on walkdir
+func walk(file string, d fs.DirEntry, e error) error {
+	if e != nil { return e }
+	if !d.IsDir() {
+		dirarr = append(dirarr, file)
+	}
+	return nil
 }
 
 // Recursivley go thourgh directories and find all the files and return an array of files/paths
