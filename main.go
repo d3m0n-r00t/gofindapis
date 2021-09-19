@@ -4,11 +4,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
-	"io/fs"
 
 	_ "github.com/dimiro1/banner/autoload"
 )
@@ -39,6 +39,7 @@ func main() {
 		if checkifdir(line) {
 			filepath.WalkDir(line, walk)
 		} else {
+			line = DIR + "/" + line
 			dirarr = append(dirarr, line)
 		}
 	}
@@ -62,7 +63,9 @@ func main() {
 
 // Ignore files callback to return full path entries on walkdir
 func walk(file string, d fs.DirEntry, e error) error {
-	if e != nil { return e }
+	if e != nil {
+		return e
+	}
 	if !d.IsDir() {
 		dirarr = append(dirarr, file)
 	}
